@@ -24,7 +24,9 @@ router.get('/users', authenticateUser, asyncHandler(async(req, res, next) => {
   const user = req.currentUser
   //returns all properties and values for authenticated user along with 200 http status code
   res.status(200).json({
-
+    firstName: user.firstName,
+    lastName: user.lastName,
+    emailAddress: user.emailAddress
   });
 }));
 
