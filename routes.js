@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const { authenticateUser } = require('./middleware/authenticate');
 const { Courses, Users } = require('./models');
+const bcrypt = require('bcrypt');
 
 
 //handler function to wrap each routes

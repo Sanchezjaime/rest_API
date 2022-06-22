@@ -2,15 +2,16 @@
 
 const auth = require('basic-auth');
 const bcrypt = require('bcrypt');
-const { users } = require('../models');
+const { Users } = require('../models');
 
 //middleware function to authenticate a user
 exports.authenticateUser = async (req, res, next) => {
   //parse the users credentials from the authorization header
+  let message;
   const credentials = auth(req);
   if (credentials) {
     //find user account that emailAddress matches credentials name
-    const user = await User.findOne({ where: {emailAddress: credentials.name} });
+    const user = await Users.findOne({ where: {emailAddress: credentials.name} });
     if (user) {
       const authenticated = bcrypt.compareSync(credentials.pass, user.password);
       if (authenticated) {
