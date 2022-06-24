@@ -5,6 +5,7 @@ const router = express.Router();
 const { authenticateUser } = require('./middleware/authenticate');
 const { Courses, Users } = require('./models');
 const bcrypt = require('bcrypt');
+const createError = require('http-errors');
 
 
 //handler function to wrap each routes
@@ -34,7 +35,7 @@ router.get('/users', authenticateUser, asyncHandler(async(req, res, next) => {
 //route to will create a new user
 router.post('/users', asyncHandler( async(req, res) => {
   try {
-      await User.create(req.body);
+      await Users.create(req.body);
       res.status(201).location("/").end();
   } catch (error) {
     console.log('Error: ', error.name);
@@ -50,11 +51,11 @@ router.post('/users', asyncHandler( async(req, res) => {
 
 //route to return all courses including the user associated with each course
 router.get('/courses', asyncHandler( async(req, res) => {
-  const courses = await Course.findAll({
+  const courses = await Courses.findAll({
     attributes: { exclude: ["createdAt", "updatedAt"]},
     include: [
       {
-        model: User,
+        model: Users,
         attributes: ['firstName', 'lastName', 'emailAddress'],
       }
     ]
@@ -64,11 +65,11 @@ router.get('/courses', asyncHandler( async(req, res) => {
 
 //route to return the corresponding course including user associated with this course
 router.get('/courses/:id', asyncHandler( async(req, res) => {
-  const course = await Course.findByPk(req.params.id, {
+  const course = await Courses.findByPk(req.params.id, {
     attributes: { exclude: ["createdAt", "updatedAt"] },
     include: [
       {
-        model: User,
+        model: Users,
         attributes: ['firstName', 'lastName', 'emailAddress'],
       }
     ]
@@ -84,7 +85,7 @@ router.get('/courses/:id', asyncHandler( async(req, res) => {
 //route that will create a new courses
 router.post('/courses', authenticateUser, asyncHandler( async(req, res) => {
   try {
-    const course = await Course.create(req.body);
+    const course = await Courses.create(req.body);
     res.status(201).location(`/api/courses/${course.id}`).end();
   } catch (error) {
     console.log('ERROR: ', error.name);
@@ -102,7 +103,7 @@ router.post('/courses', authenticateUser, asyncHandler( async(req, res) => {
 router.put('/courses/:id', authenticateUser, asyncHandler( async(req, res, next) => {
   try {
     const user = req.currentUser;
-    const course = await Course.findByPk(req.params.id);
+    const course = await Courses.findByPk(req.params.id);
     if (course && course.userId === user.id) {
       await course.update(req.body);
       res.status(204).end();
@@ -123,7 +124,7 @@ router.put('/courses/:id', authenticateUser, asyncHandler( async(req, res, next)
 //route to delete the corresponding courses
 router.delete('/courses/:id', authenticateUser, asyncHandler( async(req, res, next) => {
   const user = req.currentUser;
-  const course = await Course.findByPk(req.params.id);
+  const course = await Courses.findByPk(req.params.id);
     if (course && course.userId === user.id) {
       await course.destroy();
       res.status(204).end();
