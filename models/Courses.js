@@ -38,11 +38,9 @@ module.exports = (sequelize) => {
     },
     estimatedTime: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     materialsNeeded: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
   }, { sequelize });
 
